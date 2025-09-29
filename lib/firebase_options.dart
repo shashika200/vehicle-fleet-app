@@ -38,17 +38,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'dummy',
-    appId: 'dummy',
-    messagingSenderId: 'dummy',
-    projectId: 'dummy',
+    apiKey: 'AIzaSyBOI0ZYn_Eo5BfJ3Xdkyj0ZJVOwpM_hMgU',
+    appId: '1:828734707901:web:d832d6824ca22a81853fd4',
+    messagingSenderId: '828734707901',
+    projectId: 'irrigration-9b71c',
+    authDomain: 'irrigration-9b71c.firebaseapp.com',
+    storageBucket: 'irrigration-9b71c.firebasestorage.app',
+    measurementId: 'G-GXJ3DELRG7',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'dummy',
-    appId: 'dummy',
-    messagingSenderId: 'dummy',
-    projectId: 'dummy',
+    apiKey: 'AIzaSyA-nTySWTNpbSRjFTA7ardnMCTtuCVoGhI',
+    appId: '1:828734707901:android:099b379e877ec500853fd4',
+    messagingSenderId: '828734707901',
+    projectId: 'irrigration-9b71c',
+    storageBucket: 'irrigration-9b71c.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
