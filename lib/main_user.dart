@@ -1,10 +1,9 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/firebase_options.dart';
-import 'package:myapp/screens/user/home_screen.dart';
-import 'package:myapp/services/vehicle_service.dart';
 import 'package:provider/provider.dart';
-import 'package:myapp/models/vehicle.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'screens/user_home_screen.dart';
+import 'services/vehicle_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,16 +18,15 @@ class UserApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<Vehicle>>.value(
-      value: VehicleService().getVehicles(),
-      initialData: const [],
+    return ChangeNotifierProvider(
+      create: (_) => VehicleService(),
       child: MaterialApp(
-        title: 'Vehicle Locator',
+        title: 'Vehicle Management',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
-        home: const HomeScreen(),
+        home: const UserHomeScreen(),
       ),
     );
   }

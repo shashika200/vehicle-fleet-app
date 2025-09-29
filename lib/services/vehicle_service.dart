@@ -1,37 +1,39 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/vehicle.dart';
 
-class VehicleService {
-  final CollectionReference _vehiclesCollection = FirebaseFirestore.instance.collection('vehicles');
+class VehicleService extends ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late final CollectionReference _vehiclesCollection;
 
-  // Method to get a stream of vehicles
+  VehicleService() {
+    _vehiclesCollection = _firestore.collection('vehicles');
+  }
+
+  // Create
+  Future<void> addVehicle(Vehicle vehicle) async {
+    await _vehiclesCollection.add(vehicle.toMap());
+    notifyListeners();
+  }
+
+  // Read
   Stream<List<Vehicle>> getVehiclesStream() {
     return _vehiclesCollection.snapshots().map((snapshot) {
-      try {
-        return snapshot.docs.map((doc) => Vehicle.fromFirestore(doc)).toList();
-      } catch (e) {
-        // ignore: avoid_print
-        print('Error parsing vehicle data: $e');
-        return []; // Return an empty list on parsing error
-      }
+      return snapshot.docs.map((doc) {
+        return Vehicle.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
     });
   }
 
-  // Method to add a new vehicle
-  Future<void> addVehicle(Vehicle vehicle) {
-    return _vehiclesCollection.add(vehicle.toFirestore());
+  // Update
+  Future<void> updateVehicle(Vehicle vehicle) async {
+    await _vehiclesCollection.doc(vehicle.id).update(vehicle.toMap());
+    notifyListeners();
   }
 
-  // Method to update an existing vehicle
-  Future<void> updateVehicle(Vehicle vehicle) {
-    if (vehicle.id == null || vehicle.id!.isEmpty) {
-        throw ArgumentError('Vehicle ID cannot be empty for an update.');
-    }
-    return _vehiclesCollection.doc(vehicle.id).update(vehicle.toFirestore());
-  }
-
-  // Method to delete a vehicle
-  Future<void> deleteVehicle(String vehicleId) {
-    return _vehiclesCollection.doc(vehicleId).delete();
+  // Delete
+  Future<void> deleteVehicle(String vehicleId) async {
+    await _vehiclesCollection.doc(vehicleId).delete();
+    notifyListeners();
   }
 }

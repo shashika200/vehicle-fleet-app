@@ -26,7 +26,7 @@ class AdminApp extends StatelessWidget {
         Provider<AuthService>(
           create: (_) => AuthService(),
         ),
-        Provider<VehicleService>(
+        ChangeNotifierProvider<VehicleService>(
           create: (_) => VehicleService(),
         ),
       ],

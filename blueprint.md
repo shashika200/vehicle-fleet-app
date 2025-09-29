@@ -2,47 +2,76 @@
 
 ## 1. Project Overview
 
-This is a Flutter-based mobile and web application designed for managing a fleet of vehicles. The application provides an administrative interface to perform Create, Read, Update, and Delete (CRUD) operations on vehicle data.
+This is a Flutter-based mobile and web application designed for managing a fleet of vehicles. The application provides two distinct experiences:
 
-The project is built with a Firebase backend, leveraging Firebase Authentication for user login and Firestore as a real-time, NoSQL database for data storage. The architecture is designed to be scalable and maintainable, following modern Flutter development best practices.
+1.  **Admin Panel:** A secure, web-oriented interface for staff to perform Create, Read, Update, and Delete (CRUD) operations on vehicle data.
+2.  **User-Facing App:** A read-only mobile and web app for end-users to browse, search, and filter the vehicle fleet.
+
+The project is built with a Firebase backend, leveraging Firebase Authentication and Firestore for real-time data storage and synchronization. The architecture is designed to be scalable and maintainable, following modern Flutter development best practices.
 
 ## 2. Features & Design Implementation
 
 This section documents the cumulative features and design elements implemented in the application.
 
 ### **Core Architecture:**
-- **State Management:** `provider` is used for managing app-wide state and dependency injection, specifically for making the `VehicleService` available to the UI.
+- **State Management:** `provider` is used for managing app-wide state and dependency injection.
 - **Backend:** Google Firebase is the chosen backend.
-  - **Authentication:** Firebase Authentication (Email/Password) is used to secure the admin panel.
-  - **Database:** Cloud Firestore is used to store and sync the vehicle data in real-time.
-- **Data Model:** A `Vehicle` class (`lib/models/vehicle.dart`) defines the structure for vehicle data, including fields like `id`, `name`, `vehicleNumber`, `status`, `location`, and `details`.
-- **Services:** A dedicated `VehicleService` (`lib/services/vehicle_service.dart`) encapsulates all Firestore database operations, abstracting the data layer from the UI.
+  - **Authentication:** Firebase Authentication (Email/Password) secures the admin panel.
+  - **Database:** Cloud Firestore stores and syncs vehicle data in real-time.
+- **Data Model:** A `Vehicle` class (`lib/models/vehicle.dart`) defines the structure for vehicle data.
+- **Services:** A `VehicleService` (`lib/services/vehicle_service.dart`) encapsulates all Firestore operations.
 
-### **User Interface (UI) & User Experience (UX):**
-- **Framework:** Built with Flutter using Material Design 3 (`useMaterial3: true`).
-- **Primary Color Scheme:** Based on a seed color of `Colors.indigo`.
-- **Admin Dashboard (`lib/screens/dashboard_screen.dart`):**
-  - **Real-time Vehicle List:** Displays a live-updating list of all vehicles from Firestore.
-  - **Dynamic Filtering & Searching:**
-    - A responsive `FilterBar` allows admins to filter the vehicle list by status (`All`, `Available`, `Under Repair`, `Unavailable`).
-    - A search field allows for finding vehicles by `name`, `vehicleNumber`, or `location`.
-  - **Polished Vehicle Cards:** Each vehicle is displayed in a `Card` with a clean layout:
-    - **Status Indicator:** A colored icon on the left indicates the vehicle's status (Green for Available, Orange for Repair, Red for Unavailable).
-    - **Details:** Displays the vehicle's name, number, location, and any additional details.
-    - **Actions Menu:** A popup menu (`...`) provides options to **Edit** or **Delete** the vehicle.
-- **Add/Edit Screen (`lib/screens/add_edit_vehicle_screen.dart`):**
-  - A single, reusable form for both creating new vehicles and updating existing ones.
-  - Includes input validation to ensure required fields are not empty.
-- **Navigation:** Standard `MaterialPageRoute` navigation is used to move between the dashboard and the add/edit screen.
+### **Admin Panel Features:**
+- **Entry Point:** `lib/main_admin.dart`
+- **Real-time Dashboard:** Displays a live list of all vehicles.
+- **Dynamic Filtering & Searching:** Allows admins to filter by status and search by name, number, or location.
+- **CRUD Operations:** Admins can add, edit, and delete vehicles. The "type" field has been removed from the creation UI.
+- **Security:** Firestore rules restrict write access to authenticated admin users.
 
-### **Security:**
-- **Firestore Rules:** The database is secured with rules that only allow authenticated users (`request.auth != null`) to read or write to the `vehicles` collection. This prevents unauthorized access to the data.
+---
 
-## 3. Plan for Current Request
+## 3. Plan for Current Request: User-Facing App Overhaul
 
-**Request:** "now i want to download this project"
+**Request:** "change the user app, Purpose: Allows users to view vehicle details (read-only) with search and filter options."
+
+**Vision:** Create a functional and easy-to-use application for users to find vehicle information quickly. The UI will be clean, following Material Design principles with a blue color scheme.
 
 **Plan:**
-1.  **Finalize Documentation:** Create this `blueprint.md` file to document the project's current state as per development guidelines.
-2.  **Prepare for Transfer:** Initialize a local Git repository and commit all project files.
-3.  **Provide Instructions:** Guide the user on how to push this repository to a remote service (like GitHub) and then clone it to their local machine.
+
+1.  **Update Data Model (`lib/models/vehicle.dart`):**
+    - Add a `lastUpdated` timestamp field to the `Vehicle` model to track when a record was last modified.
+
+2.  **Update Data Service (`lib/services/vehicle_service.dart`):**
+    - Modify the `addVehicle` and `updateVehicle` methods to automatically set the `lastUpdated` timestamp on every write operation.
+
+3.  **Create the User App Entry Point (`lib/main_user.dart`):**
+    - Initialize the user-facing app.
+    - Configure a `MaterialApp` with a blue theme and set the title to "Vehicle Management".
+    - Set `UserHomeScreen` as the home widget.
+
+4.  **Develop the User Home Screen (`lib/screens/user_home_screen.dart`):**
+    - This screen will serve as the main interface for the user.
+    - **UI Structure:**
+        - `AppBar` with the title "Vehicle Management".
+        - A search `TextField` at the top to filter vehicles by name, number, or location.
+        - A set of filter chips/buttons below the search bar for status: "All", "Available", "Under Repair", "Unavailable".
+        - A scrollable list of `Vehicle` cards displaying the search and filter results.
+    - **Functionality:**
+        - Implement state management to handle search queries and filter selections.
+        - Fetch vehicle data using the `VehicleService`.
+        - Apply search and filter logic to the list of vehicles in real-time.
+        - Each vehicle card will be tappable, navigating to the detail screen.
+
+5.  **Develop the Vehicle Detail Screen (`lib/screens/vehicle_detail_screen.dart`):**
+    - This screen will display the complete, read-only details of a selected vehicle.
+    - It will be presented when a user taps a vehicle card on the home screen.
+    - **Details to Display:**
+        - Name
+        - Vehicle Number
+        - Status
+        - Location
+        - Details/Description
+        - Last Updated Timestamp
+
+6.  **Launch & Preview:**
+    - Run the new user app using `flutter run -t lib/main_user.dart` to showcase the revamped application.

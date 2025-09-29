@@ -15,7 +15,7 @@ class AddEditVehicleScreen extends StatefulWidget {
 class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
   final _formKey = GlobalKey<FormState>();
   late String _name;
-  late String _vehicleNumber; // Changed from _type
+  late String _vehicleNumber;
   late String _status;
   late String _location;
   String? _details;
@@ -28,7 +28,7 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
   void initState() {
     super.initState();
     _name = widget.vehicle?.name ?? '';
-    _vehicleNumber = widget.vehicle?.vehicleNumber ?? ''; // Changed from _type
+    _vehicleNumber = widget.vehicle?.vehicleNumber ?? '';
     _status = widget.vehicle?.status ?? _vehicleStatuses.first;
     _location = widget.vehicle?.location ?? '';
     _details = widget.vehicle?.details;
@@ -48,7 +48,8 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
       final vehicleToSave = Vehicle(
         id: widget.vehicle?.id ?? '',
         name: _name,
-        vehicleNumber: _vehicleNumber, // Changed from type
+        vehicleNumber: _vehicleNumber,
+        type: '', // Set type to an empty string
         status: _status,
         location: _location,
         details: _details,
@@ -101,12 +102,12 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
                 decoration: const InputDecoration(labelText: 'Vehicle Number', border: OutlineInputBorder()),
                 validator: (value) =>
                     value!.trim().isEmpty ? 'Please enter a vehicle number' : null,
-                onSaved: (value) => _vehicleNumber = value!, 
+                onSaved: (value) => _vehicleNumber = value!,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _status,
                 decoration: const InputDecoration(labelText: 'Status', border: OutlineInputBorder()),
+                initialValue: _status,
                 items: _vehicleStatuses
                     .map((status) =>
                         DropdownMenuItem(value: status, child: Text(status)))

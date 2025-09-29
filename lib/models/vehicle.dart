@@ -1,62 +1,50 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Vehicle {
-  final String? id;
+  final String id;
   final String name;
-  final String vehicleNumber; // Changed from type
+  final String vehicleNumber;
+  final String type; // Added field
   final String status;
   final String location;
   final String? details;
+  final Timestamp? lastUpdated; // Added field
 
   Vehicle({
-    this.id,
+    required this.id,
     required this.name,
-    required this.vehicleNumber, // Changed from type
+    required this.vehicleNumber,
+    required this.type,
     required this.status,
     required this.location,
     this.details,
+    this.lastUpdated,
   });
 
-  // Factory to create a Vehicle from a Firestore document
-  factory Vehicle.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Vehicle(
-      id: doc.id,
-      name: data['name'] ?? '',
-      vehicleNumber: data['vehicleNumber'] ?? '', // Changed from type
-      status: data['status'] ?? '',
-      location: data['location'] ?? '',
-      details: data['details'] as String?,
-    );
-  }
-
-  // Method to convert a Vehicle to a map for Firestore
-  Map<String, dynamic> toFirestore() {
+  // Convert a Vehicle object into a map, including the server timestamp
+  Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'vehicleNumber': vehicleNumber, // Changed from type
+      'vehicleNumber': vehicleNumber,
+      'type': type,
       'status': status,
       'location': location,
       'details': details,
+      'lastUpdated': FieldValue.serverTimestamp(), // Automatically set by Firestore
     };
   }
 
-   // Method to create a copy with updated fields
-  Vehicle copyWith({
-    String? id,
-    String? name,
-    String? vehicleNumber,
-    String? status,
-    String? location,
-    String? details,
-  }) {
+  // Create a Vehicle object from a map
+  factory Vehicle.fromMap(Map<String, dynamic> map, String documentId) {
     return Vehicle(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      vehicleNumber: vehicleNumber ?? this.vehicleNumber, // Changed from type
-      status: status ?? this.status,
-      location: location ?? this.location,
-      details: details ?? this.details,
+      id: documentId,
+      name: map['name'] ?? '',
+      vehicleNumber: map['vehicleNumber'] ?? '',
+      type: map['type'] ?? 'N/A', // Provide default value
+      status: map['status'] ?? 'Unknown',
+      location: map['location'] ?? 'Unknown',
+      details: map['details'],
+      lastUpdated: map['lastUpdated'] as Timestamp?,
     );
   }
 }

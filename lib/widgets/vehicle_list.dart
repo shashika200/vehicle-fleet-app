@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For date formatting if needed in future
 import '../models/vehicle.dart';
 import '../screens/add_edit_vehicle_screen.dart';
 import '../services/vehicle_service.dart';
@@ -121,15 +120,21 @@ class VehicleList extends StatelessWidget {
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
             onPressed: () async {
+              // Check if the widget is still in the tree
+              if (!context.mounted) return;
+              final vehicleService = context.read<VehicleService>();
+              final messenger = ScaffoldMessenger.of(context);
+              final navigator = Navigator.of(ctx);
+
               try {
-                await context.read<VehicleService>().deleteVehicle(vehicle.id!);
-                Navigator.of(ctx).pop(); // Close the dialog
-                 ScaffoldMessenger.of(context).showSnackBar(
+                await vehicleService.deleteVehicle(vehicle.id);
+                navigator.pop(); // Close the dialog
+                messenger.showSnackBar(
                   const SnackBar(content: Text('Vehicle deleted successfully'), backgroundColor: Colors.green),
                 );
               } catch (e) {
-                 Navigator.of(ctx).pop();
-                 ScaffoldMessenger.of(context).showSnackBar(
+                 navigator.pop();
+                 messenger.showSnackBar(
                   SnackBar(content: Text('Error deleting vehicle: $e'), backgroundColor: Colors.red),
                 );
               }
