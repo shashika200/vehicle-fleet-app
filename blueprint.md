@@ -18,60 +18,51 @@ This section documents the cumulative features and design elements implemented i
 - **Backend:** Google Firebase is the chosen backend.
   - **Authentication:** Firebase Authentication (Email/Password) secures the admin panel.
   - **Database:** Cloud Firestore stores and syncs vehicle data in real-time.
-- **Data Model:** A `Vehicle` class (`lib/models/vehicle.dart`) defines the structure for vehicle data.
+- **Data Model:** A `Vehicle` class (`lib/models/vehicle.dart`) defines the structure for vehicle data, including a `lastUpdated` timestamp.
 - **Services:** A `VehicleService` (`lib/services/vehicle_service.dart`) encapsulates all Firestore operations.
 
 ### **Admin Panel Features:**
 - **Entry Point:** `lib/main_admin.dart`
 - **Real-time Dashboard:** Displays a live list of all vehicles.
 - **Dynamic Filtering & Searching:** Allows admins to filter by status and search by name, number, or location.
-- **CRUD Operations:** Admins can add, edit, and delete vehicles. The "type" field has been removed from the creation UI.
-- **Security:** Firestore rules restrict write access to authenticated admin users.
+- **CRUD Operations:** Admins can add, edit, and delete vehicles.
+
+### **User-Facing App Features:**
+- **Entry Point:** `lib/main_user.dart`
+- **Theme:** Styled with a blue Material Design 3 color scheme.
+- **Real-time Vehicle List:** The `UserHomeScreen` displays a live, searchable, and filterable list of all vehicles.
+- **Search & Filter:** Users can search by vehicle name, number, or location, and filter by status ("All", "Available", "Under Repair", "Unavailable").
+- **Read-Only Detail View:** A `VehicleDetailScreen` shows all information for a selected vehicle, including the `lastUpdated` timestamp.
 
 ---
 
-## 3. Plan for Current Request: User-Facing App Overhaul
+## 3. Plan for Current Request: Implement Dark Mode
 
-**Request:** "change the user app, Purpose: Allows users to view vehicle details (read-only) with search and filter options."
+**Request:** Add a dark mode theme toggle to the user-facing application.
 
-**Vision:** Create a functional and easy-to-use application for users to find vehicle information quickly. The UI will be clean, following Material Design principles with a blue color scheme.
+**Vision:** Enhance the user experience by providing a visually comfortable dark theme option. The user should be able to switch between light, dark, and system default themes easily.
 
 **Plan:**
 
-1.  **Update Data Model (`lib/models/vehicle.dart`):**
-    - Add a `lastUpdated` timestamp field to the `Vehicle` model to track when a record was last modified.
+1.  **Update Dependencies:**
+    - Ensure the `provider` package is already installed to manage the theme state.
 
-2.  **Update Data Service (`lib/services/vehicle_service.dart`):**
-    - Modify the `addVehicle` and `updateVehicle` methods to automatically set the `lastUpdated` timestamp on every write operation.
+2.  **Create a Theme Provider (`lib/theme_provider.dart`):**
+    - Create a new `ThemeProvider` class that uses `ChangeNotifier`.
+    - It will hold the current `ThemeMode` (`light`, `dark`, or `system`).
+    - It will expose a method, `toggleTheme()`, to switch between light and dark modes.
 
-3.  **Create the User App Entry Point (`lib/main_user.dart`):**
-    - Initialize the user-facing app.
-    - Configure a `MaterialApp` with a blue theme and set the title to "Vehicle Management".
-    - Set `UserHomeScreen` as the home widget.
+3.  **Update the User App Entry Point (`lib/main_user.dart`):**
+    - Wrap the `UserApp` widget with a `ChangeNotifierProvider` for the new `ThemeProvider`.
+    - Update `MaterialApp` to consume the `ThemeProvider`.
+    - Define both a `lightTheme` and a `darkTheme` using `ThemeData`.
+    - Set the `themeMode` property of the `MaterialApp` to the one provided by `ThemeProvider`.
 
-4.  **Develop the User Home Screen (`lib/screens/user_home_screen.dart`):**
-    - This screen will serve as the main interface for the user.
-    - **UI Structure:**
-        - `AppBar` with the title "Vehicle Management".
-        - A search `TextField` at the top to filter vehicles by name, number, or location.
-        - A set of filter chips/buttons below the search bar for status: "All", "Available", "Under Repair", "Unavailable".
-        - A scrollable list of `Vehicle` cards displaying the search and filter results.
-    - **Functionality:**
-        - Implement state management to handle search queries and filter selections.
-        - Fetch vehicle data using the `VehicleService`.
-        - Apply search and filter logic to the list of vehicles in real-time.
-        - Each vehicle card will be tappable, navigating to the detail screen.
+4.  **Update the User Home Screen (`lib/screens/user_home_screen.dart`):**
+    - Add an `IconButton` to the `AppBar`'s `actions`.
+    - The icon will change based on the current theme (e.g., `Icons.dark_mode` or `Icons.light_mode`).
+    - The `onPressed` callback will call `Provider.of<ThemeProvider>(context, listen: false).toggleTheme()`.
 
-5.  **Develop the Vehicle Detail Screen (`lib/screens/vehicle_detail_screen.dart`):**
-    - This screen will display the complete, read-only details of a selected vehicle.
-    - It will be presented when a user taps a vehicle card on the home screen.
-    - **Details to Display:**
-        - Name
-        - Vehicle Number
-        - Status
-        - Location
-        - Details/Description
-        - Last Updated Timestamp
-
-6.  **Launch & Preview:**
-    - Run the new user app using `flutter run -t lib/main_user.dart` to showcase the revamped application.
+5.  **Test the Implementation:**
+    - Run the user app and verify that the theme toggle works as expected.
+    - Check that both light and dark themes are applied correctly across all screens.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/vehicle.dart';
 import '../services/vehicle_service.dart';
+import '../theme_provider.dart';
 import 'vehicle_detail_screen.dart';
 
 class UserHomeScreen extends StatefulWidget {
@@ -20,11 +21,19 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final vehicleService = Provider.of<VehicleService>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vehicle Management'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: Icon(themeProvider.themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+            onPressed: () => themeProvider.toggleTheme(),
+            tooltip: 'Toggle Theme',
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -103,8 +112,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       ),
     );
   }
-  
-    Color _getStatusColor(String status) {
+
+  Color _getStatusColor(String status) {
     switch (status) {
       case 'Available':
         return Colors.green;
