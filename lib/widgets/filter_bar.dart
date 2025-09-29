@@ -43,8 +43,6 @@ class _FilterBarState extends State<FilterBar> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
@@ -58,9 +56,15 @@ class _FilterBarState extends State<FilterBar> {
           ),
         ],
       ),
-      child: screenWidth > 600
-          ? _buildWideLayout(context)
-          : _buildNarrowLayout(context),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 600) {
+            return _buildWideLayout(context);
+          } else {
+            return _buildNarrowLayout(context);
+          }
+        },
+      ),
     );
   }
 
@@ -81,12 +85,14 @@ class _FilterBarState extends State<FilterBar> {
   }
 
   Widget _buildNarrowLayout(BuildContext context) {
-    return Column(
-      children: [
-        _buildSearchField(),
-        const SizedBox(height: 12),
-        _buildStatusDropdown(context),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildSearchField(),
+          const SizedBox(height: 12),
+          _buildStatusDropdown(context),
+        ],
+      ),
     );
   }
 
