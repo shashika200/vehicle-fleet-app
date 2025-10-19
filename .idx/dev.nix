@@ -5,11 +5,21 @@
   channel = "stable-24.05"; # or "unstable"
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.jdk21
+    pkgs.gtk3
+    pkgs.jdk17
     pkgs.unzip
+    pkgs.imagemagick
+    pkgs.clang
+    pkgs.cmake
+    pkgs.ninja
+    pkgs.pkg-config
+    pkgs.androidenv.androidPkgs_9_0.androidsdk
   ];
+
   # Sets environment variables in the workspace
-  env = {};
+  env = {
+    ANDROID_SDK_ROOT = "${pkgs.androidenv.androidPkgs_9_0.androidsdk}/share/android-sdk";
+  };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
@@ -26,11 +36,11 @@
       enable = true;
       previews = {
         web = {
-          command = ["flutter" "run" "--machine" "-d" "web-server" "--web-hostname" "0.0.0.0" "--web-port" "$PORT"];
+          command = ["flutter" "run" "-t" "lib/main_user.dart" "--machine" "-d" "web-server" "--web-hostname" "0.0.0.0" "--web-port" "$PORT"];
           manager = "flutter";
         };
         android = {
-          command = ["flutter" "run" "--machine" "-d" "android" "-d" "localhost:5555"];
+          command = ["flutter" "run" "-t" "lib/main_user.dart" "--machine" "-d" "android" "-d" "localhost:5555"];
           manager = "flutter";
         };
       };
