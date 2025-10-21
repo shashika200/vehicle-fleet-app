@@ -14,6 +14,8 @@
     pkgs.ninja
     pkgs.pkg-config
     (pkgs.androidenv.androidPkgs_9_0.override { licenseAccepted = true; }).androidsdk
+    pkgs.androidenv.androidPkgs_9_0.platform-tools
+    pkgs.androidenv.androidPkgs_9_0.emulator
   ];
 
   # Sets environment variables in the workspace
