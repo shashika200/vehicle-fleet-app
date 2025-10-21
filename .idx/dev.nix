@@ -3,12 +3,12 @@
 { pkgs, ... }:
 let
   androidPkgs = pkgs.androidenv.composeAndroidPackages {
-    platformVersions = [ "33" ];
-    buildToolsVersions = [ "33.0.2" ];
-    ndkVersions = [ "25.2.9519653" ];
+    buildToolsVersions = [ "34.0.0" ];
+    platformVersions = [ "34" ];
     abiVersions = [ "x86_64" ];
     includeEmulator = true;
     includeSystemImages = true;
+    licenseAccepted = true; # This is a mandatory attribute.
   };
 in
 {
@@ -40,7 +40,7 @@ in
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
-      "Dart-Code.flutter"
+      "Dart-Code.flutter",
       "Dart-Code.dart-code"
     ];
     workspace = {
