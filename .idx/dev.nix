@@ -13,12 +13,12 @@
     pkgs.cmake
     pkgs.ninja
     pkgs.pkg-config
-    pkgs.androidenv.androidPkgs_9_0.androidsdk
+    (pkgs.androidenv.androidPkgs_9_0.override { licenseAccepted = true; }).androidsdk
   ];
 
   # Sets environment variables in the workspace
   env = {
-    ANDROID_SDK_ROOT = "${pkgs.androidenv.androidPkgs_9_0.androidsdk}/share/android-sdk";
+    ANDROID_SDK_ROOT = "${(pkgs.androidenv.androidPkgs_9_0.override { licenseAccepted = true; }).androidsdk}/share/android-sdk";
   };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
