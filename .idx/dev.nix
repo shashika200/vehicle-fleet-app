@@ -1,22 +1,8 @@
-
 # To learn more about how to use Nix to configure your environment
 # see: https://firebase.google.com/docs/studio/customize-workspace
-{ pkgs, ... }: 
-let
-  # Correct Android environment definition using composeAndroidPackages
-  androidPkgs = pkgs.androidenv.composeAndroidPackages {
-    platformVersions = ["33"];
-    buildToolsVersions = ["33.0.2"];
-    abiVersions = ["x86_64"];
-    includeEmulator = true;
-    includeSystemImages = true;
-    licenseAccepted = true;
-  };
-in
-{
+{ pkgs, ... }: {
   # Which nixpkgs channel to use.
   channel = "stable-24.05"; # or "unstable"
-  
   # Use https://search.nixos.org/packages to find packages
   packages = [
     pkgs.gtk3
@@ -27,18 +13,15 @@ in
     pkgs.cmake
     pkgs.ninja
     pkgs.pkg-config
-    # Add the composed Android packages to the environment
-    androidPkgs.androidsdk
-    androidPkgs.platform-tools
-    androidPkgs.emulator
+    (pkgs.androidenv.androidPkgs_9_0 { licenseAccepted = true; }).androidsdk
+    (pkgs.androidenv.androidPkgs_9_0 { licenseAccepted = true; }).platform-tools
+    (pkgs.androidenv.androidPkgs_9_0 { licenseAccepted = true; }).emulator
   ];
 
   # Sets environment variables in the workspace
   env = {
-    # Update the ANDROID_SDK_ROOT to the correct path
-    ANDROID_SDK_ROOT = "${androidPkgs.androidsdk}/share/android-sdk";
+    ANDROID_SDK_ROOT = "${(pkgs.androidenv.androidPkgs_9_0 { licenseAccepted = true; }).androidsdk}/share/android-sdk";
   };
-  
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
@@ -59,7 +42,6 @@ in
           manager = "flutter";
         };
         android = {
-          # Simplified the command, as auto-detection should now work.
           command = ["flutter" "run" "-t" "lib/main_user.dart" "--machine" "-d" "android"];
           manager = "flutter";
         };
